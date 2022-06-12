@@ -1,0 +1,84 @@
+zabbix_export:
+  version: '5.4'
+  date: '2022-06-11T09:15:33Z'
+  media_types:
+    -
+      name: dingding
+      type: WEBHOOK
+      parameters:
+        -
+          name: Key
+          value: f4589eb7b80d93b8802c7de2c20d16aa775140991e6c2d5e7ff65aa8e4ba5265
+        -
+          name: Message
+          value: '{ALERT.MESSAGE}'
+        -
+          name: Subject
+          value: '{ALERT.SUBJECT}'
+        -
+          name: To
+          value: '{ALERT.SENDTO}'
+      script: |
+        var dingding = {
+          key: null, 
+          message: null,
+          msgtype: "markdown",
+          proxy: null,
+        sendMessage: function () {
+            var params = {
+               msgtype: dingding.msgtype,
+               markdown: {
+                  title: "IT小白Kasar",
+                  text: dingding.message
+                },
+              },
+              data,
+              response,
+              request = new CurlHttpRequest(),
+              url =
+                "https://oapi.dingtalk.com/robot/send?access_token=" +
+                dingding.key;
+            if (dingding.proxy) {
+              request.setProxy(dingding.proxy);
+            }
+            request.AddHeader("Content-Type: application/json");
+            data = JSON.stringify(params);
+            // Remove replace() function if you want to see the exposed key in the log file.
+            Zabbix.Log(
+              4,
+              "[dingding Webhook] URL: " + url.replace(dingding.key, "<BOT KEY>")
+            );
+            Zabbix.Log(4, "[dingding Webhook] params: " + data);
+            response = request.Post(url, data);
+            Zabbix.Log(4, "[dingding Webhook] HTTP code: " + request.Status());
+            try {
+              response = JSON.parse(response);
+            } catch (error) {
+              response = null;
+            }
+            if (request.Status() !== 200 || response.errcode !== 0) {
+              if (typeof response.errmsg === "string") {
+                throw response.errmsg;
+              } else {
+                throw "Unknown error. Check debug log for more information.";
+              }
+            }
+          },
+        };
+        try {
+          var params = JSON.parse(value);
+          if (typeof params.Key === "undefined") {
+            throw 'Incorrect value is given for parameter "Key": parameter is missing';
+          }
+          dingding.key = params.Key;
+          if (params.HTTPProxy) {
+            dingding.proxy = params.HTTPProxy;
+          }
+          dingding.to = params.To;
+          dingding.message = params.Subject + "\n" + params.Message;
+          dingding.sendMessage();
+          return "OK";
+        } catch (error) {
+          Zabbix.Log(4, "[dingding Webhook] notification failed: " + error);
+          throw "Sending failed: " + error + ".";
+        }
