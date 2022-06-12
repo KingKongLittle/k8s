@@ -4,6 +4,7 @@
 
 1、修改了zabbix版本5.4
 2、修改时区 "Asia/Shanghai"
+3、replicas =1 
 
 
 使用postgresql参考代码 
