@@ -1760,7 +1760,7 @@ metadata:
   labels:
     app.kubernetes.io/name: zabbix-statefulset
 spec:
-  replicas: 2
+  replicas: 1
   serviceName: zabbix-statefulset
   podManagementPolicy: OrderedReady # or Parallel (default is OrderedReady)
   updateStrategy:
