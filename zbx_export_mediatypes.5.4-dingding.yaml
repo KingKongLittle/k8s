@@ -8,7 +8,7 @@ zabbix_export:
       parameters:
         -
           name: Key
-          value: f4589eb7b80d93b8802c7de2c20d16aa775140991e6c2d5e7ff65aa8e4ba5265
+          value: f4589eb7b80d93b8802c7de2c20d16aa775140991e6c2d5e7ff65aa8e4baXXXX
         -
           name: Message
           value: '{ALERT.MESSAGE}'
