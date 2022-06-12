@@ -11,6 +11,10 @@ zabbix-mysql-deploy.yaml
 https://github.com/jijeesh/k8s-zabbix
 1、修改zabbix-web模块
 
+
+kubectl apply -f postgresql-deploy.yaml -nzabbix
+kubectl apply -f zabbix-postgresql-deploy.yaml  -nzabbix
+
 使用postgresql参考代码 
 1、https://github.com/CharcoGreen/k8s-zabbix/tree/main/zabbix
 2、https://github.com/luis13byte/zabbix-server-k8s
